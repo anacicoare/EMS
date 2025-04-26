@@ -1,0 +1,16 @@
+# _format_version: "2.1"
+
+# services:
+#   - name: books-service
+#     url: http://labkong_books-service/api
+#     routes:
+#       - name: books-service-route
+#         paths: 
+#           - /api/books
+          
+#   - name: db-adminer
+#     url: http://labkong_adminer:8080
+#     routes:
+#       - name: adminer-service
+#         paths:
+#           - /adminer
