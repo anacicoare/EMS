@@ -112,6 +112,7 @@ const PaymentTable = ({ data }: PaymentTableProps) => {
     initialState: {
       pagination: {
         pageSize: 5,
+        pageIndex: 0,
       },
     },
     positionToolbarAlertBanner: 'bottom',

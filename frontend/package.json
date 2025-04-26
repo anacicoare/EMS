@@ -32,11 +32,13 @@
     "axios": "^1.3.4",
     "crypto-js": "^4.1.1",
     "dayjs": "^1.11.7",
+    "dynamsoft-barcode-reader": "^10.4.31",
+    "dynamsoft-core": "^3.4.31",
+    "dynamsoft-license": "^3.4.31",
     "embla-carousel-react": "^7.0.2",
-    "eslint": "8.35.0",
     "eslint-config-next": "13.2.3",
     "esri-loader": "^3.7.0",
-    "export-to-csv": "^1.3.0",
+    "export-to-csv": "^1.4.0",
     "framer-motion": "^11.17.0",
     "gantt-task-react": "^0.3.9",
     "jquery": "^3.6.4",
@@ -61,7 +63,8 @@
     "react-scroll": "^1.9.0",
     "react-scroll-to-top": "^3.0.0",
     "sass": "^1.58.3",
-    "typescript": "4.9.5",
+    "tsc": "^2.0.4",
+    "typescript": "5.0",
     "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
@@ -72,6 +75,7 @@
     "@types/lodash": "^4.14.191",
     "@types/pubsub-js": "^1.8.3",
     "autoprefixer": "^10.4.14",
+    "eslint": "^8.57.1",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.7"
   }

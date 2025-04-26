@@ -35,8 +35,9 @@ function DraggableCard({ task, moveTask }: { task: any; moveTask: (task: any, ne
     const [selectedValue, setSelectedValue] = useState(task.status); // Set initial value
     const [description, setDescription] = useState(task.description);
     const [estimate, setEstimate] = useState(task.estimation);
-    const [start_date, setStartDate] = useState(new Date(task.start_date));
-    const [end_date, setEndDate] = useState(new Date(task.end_date));
+    const [start_date, setStartDate] = useState<Date | null>(new Date(task.start_date));
+    const [end_date, setEndDate] = useState<Date | null>(new Date(task.end_date));
+
 
     const handleEstimateChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
         let value = event.currentTarget.value;

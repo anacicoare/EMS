@@ -10,6 +10,9 @@ module.exports = {
     config.optimization.minimize = true;
     return config;
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 };
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({

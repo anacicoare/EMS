@@ -12,9 +12,6 @@ import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import React from 'react';
 import { AdminServices } from '@/services/admin/AdminServices';
-import { CardServices } from '@/services/cards/cardservices';
-import AddLoanButton from '../addLoanButton/AddLoanButton';
-import UpdateLoanButton from '../updateLoan/UpdateLoanButton';
 
 // Configure CSV export with custom headers
 const csvConfig = mkConfig({
@@ -92,21 +89,6 @@ const Example = (props: any) => {
     });
 
     if(selectedIban && cardBalance){
-        CardServices.updateIbanBalance({ iban: selectedIban, balance: cardBalance }).then((res) => {
-            console.log(res);
-            setUserCards(userCards.map((card: any) => {
-                if(card.value === selectedIban){
-                    return {
-                        value: card.value,
-                        label: card.label,
-                        balance: cardBalance
-                    }
-                }
-                return card;
-            }));
-        }).catch((err) => {
-            console.log(err);
-        });
     }
       
     close();
@@ -146,17 +128,6 @@ const Example = (props: any) => {
             <Button onClick={() => handleUpdate(row.original)}>
                 <IconEdit />
             </Button>
-            ),
-        },
-         {
-            accessorKey: 'loans',
-            header: 'Împrumuturi',
-            size: 120,
-             Cell: ({ row }: { row: MRT_Row<any> }) => (
-                <div className='flex flex-col'>
-                     <AddLoanButton name={row?.original?.name} />
-                     <UpdateLoanButton email={row?.original?.email} />
-                </div>
             ),
         },
     ];
@@ -246,18 +217,6 @@ const Example = (props: any) => {
     const getAccountsForUser = (email: string) => {
         if (email && lastSelectedUser != email) {
             setLastSelectedUser(email);
-            CardServices.getUserCards(email).then((res: any) => {
-                console.log(res?.data?.cards);
-                setUserCards(res?.data?.cards.map((card: any) => {
-                    return {
-                        value: card?.iban,
-                        label: card?.name,
-                        balance: card?.balance
-                    }
-                }));
-            }).catch((err: any) => {
-                console.log(err);
-            });
         }
         return userCards;
     };

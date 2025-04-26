@@ -3,11 +3,12 @@ import { Card, Text, Badge, Divider, Avatar, ScrollArea } from "@mantine/core";
 import TeamDetailModal from "./TeamDetailModal"; // Import your reusable modal
 
 interface Team {
-  id?: number;           // ensure we have an ID field
+  id: number;           // ensure we have an ID field
   name: string;
   description: string;
   department: string;
   owner: string;
+  members?: any[];  
 }
 
 export default function TeamCard({ team }: { team: Team }) {
@@ -108,9 +109,10 @@ export default function TeamCard({ team }: { team: Team }) {
         <TeamDetailModal
           isOpen={showModal}
           onClose={handleCloseModal}
-          team={team}
-          // Provide an array of all members or fetch them. Here is an empty array:
-          allMembers={[]}
+          team={{...team,
+            members: team.members ?? []
+
+          }}
         />
       )}
     </>

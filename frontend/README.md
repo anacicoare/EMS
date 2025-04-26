@@ -12,6 +12,10 @@
    Run **npm run dev** to start the development server.
    Open http://localhost:3000 in your browser to see the application.
 
+## Docker use
+   Run the following commands: **docker build -t employee-management-frontend .**
+   and then: **docker run -e PORT=4000 -p 4000:4000 employee-management-frontend**
+
 ## Usage
    This application is designed to help users manage their finances.
 

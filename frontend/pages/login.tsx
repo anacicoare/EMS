@@ -94,7 +94,7 @@ export default function LoginPage() {
                                 Confirm
                             </Button>
                             <Link href={'/register'}>
-                                <Text className="-mb-3" size="sm" align="center" mt="md" variant="link">Don't have an account yet? Register here</Text>
+                                <Text className="-mb-3" size="sm" align="center" mt="md" variant="link">Don&apos;t have an account yet? Register here</Text>
                             </Link>
                             <Link href={'/'}>
                                 <Text className="-mb-3" size="sm" align="center" mt="md" variant="link">Back to home page</Text>

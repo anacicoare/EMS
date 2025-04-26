@@ -114,7 +114,9 @@ export default function TeamPage() {
             <div
                 className="fixed top-2 left-[300px] z-50 flex"
             >
-                <Button onClick={spotlight.open} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>Change team</Button>
+                <Button onClick={() => spotlight.open()} variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>
+                    Change team
+                </Button>
                 <Button onClick={open} className="ml-4" variant="gradient" gradient={{ from: 'teal', to: 'blue', deg: 60 }}>View Gantt chart</Button>
             </div>
         );

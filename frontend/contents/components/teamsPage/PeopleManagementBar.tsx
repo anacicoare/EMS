@@ -247,7 +247,7 @@ function AddPeopleModal({
   };
 
   // Convert `teams` & `people` to options for Select / MultiSelect
-  const teamOptions = teams?.teams?.map((t: any) => ({
+  const teamOptions = teams?.map((t: any) => ({
     label: t.name,
     value: String(t.id), // ensure string
   }));

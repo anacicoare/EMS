@@ -6,15 +6,24 @@ import { ProfileServices } from '@/services/profile/profile';
 import { ProfileContext } from '@/contexts/ProfileContext';
 import { useRouter } from 'next/router';
 
+// Define the type for userData
+interface UserData {
+  name: string;
+  email: string;
+  profile_picture?: string;
+  is_admin?: boolean;
+  type: 'manager' | 'user';
+}
+
 export default function ProfilePage() {
-    const [userData, setUserData] = useState<any>(null);
+    const [userData, setUserData] = useState<UserData | null>(null);
     const [avatar, setAvatar] = useState<string>('user.png');
     const [isUploading, setIsUploading] = useState(false);
     const profile = useContext(ProfileContext);
     const router = useRouter();
 
     useEffect(() => {
-        if(profile?.profile?.email) {
+        if (profile?.profile?.email) {
             ProfileServices.callApiGetUserData(profile.profile.email)
                 .then((response: any) => {
                     if (response?.data) {
@@ -46,10 +55,16 @@ export default function ProfilePage() {
             
             if (response?.data?.url) {
                 setAvatar(response.data.url);
+                // Update `setUserData` to handle `undefined` name values
                 setUserData(prev => ({
                     ...prev,
-                    profile_picture: response.data.url
+                    profile_picture: response.data.url,
+                    name: prev?.name ?? '', // Ensure name is always a string
+                    email: prev?.email ?? '', // Ensure email is a string
+                    is_admin: prev?.is_admin ?? false, // Default to false if is_admin is undefined
+                    type: prev?.type ?? 'user', // Default to 'user' if type is undefined
                 }));
+
             }
         } catch (error) {
             console.error("Error uploading profile picture:", error);
