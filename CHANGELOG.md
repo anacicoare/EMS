@@ -26,6 +26,9 @@ Contribuitori: Cicoare Ana Maria 341C5 și Popa Răzvan Mihai 341C5.
 - Integrarea unui utilitar pentru mysql, mai exact phpmyadmin cu docker
 - Crearea unui docker-compose.yml pentru baza de date, frontend și backend
 - Crearea de fișiere Dockerfile pentru componentele de frontend și backend
+- Segmentarea codului de backend in 4 module: business logic, teams, tasks, payments
+- Realizarea dependintelor intre cele 4 module pentru partea de business logic
+- Rezolvarea conflictelor pe migrari la baza de date
 
 ### Fixed 
 - Actualizarea tipurilor variabilelor din typescript pentru un build corect.
