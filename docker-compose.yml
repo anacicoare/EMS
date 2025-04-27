@@ -65,25 +65,118 @@ services:
       restart_policy:
         condition: on-failure
 
-  backend:
-    image: backend-image:latest
-    # command: python manage.py runserver 0.0.0.0:8000
+  # backend:
+  #   image: backend-image:latest
+  #   # command: python manage.py runserver 0.0.0.0:8000
+  #   command: >
+  #     sh -c "
+  #     python manage.py migrate &&
+  #     python manage.py runserver 0.0.0.0:8000
+  #     "
+  #   volumes:
+  #     - ./backend:/app
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - DB_HOST=db
+  #     - DB_NAME=ems
+  #     - DB_USER=root
+  #     - DB_PASSWORD=root
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 1000M
+  #     restart_policy:
+  #       condition: on-failure
+
+  business_module:
+    image: razvim23/business-module-image:latest
+    command: python manage.py runserver 0.0.0.0:8002
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./business_module:/app
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1000M
+      restart_policy:
+        condition: on-failure
+
+  payments_module:
+    image: razvim23/payments-module-image:latest
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8003
+      "
+    ports:
+      - "8003:8003"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=ems
+      - DB_USER=root
+      - DB_PASSWORD=root
+    volumes:
+      - ./payments_module:/app
+    depends_on:
+      - db
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1000M
+      restart_policy:
+        condition: on-failure
+
+  tasks_module:
+    image: razvim23/tasks-module-image:latest
+    ports:
+      - "8004:8004"
+    command: >
+      sh -c "
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8004
+      "
+    environment:
+      - DB_HOST=db
+      - DB_NAME=ems
+      - DB_USER=root
+      - DB_PASSWORD=root
+    volumes:
+      - ./tasks_module:/app
+    depends_on:
+      - db
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1000M
+      restart_policy:
+        condition: on-failure
+
+  teams_module:
+    image: razvim23/teams-module-image:latest
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_HOST=db
+      - DB_NAME=ems
+      - DB_USER=root
+      - DB_PASSWORD=root
     command: >
       sh -c "
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8000
       "
     volumes:
-      - ./backend:/app
-    ports:
-      - "8000:8000"
+      - ./teams_module:/app
     depends_on:
       - db
-    environment:
-      - DB_HOST=db
-      - DB_NAME=ems
-      - DB_USER=root
-      - DB_PASSWORD=root
     deploy:
       resources:
         limits:
@@ -99,7 +192,7 @@ services:
     environment:
       - PORT=4000
     depends_on:
-      - backend
+      - db
     deploy:
       resources:
         limits:
