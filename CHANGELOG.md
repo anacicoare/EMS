@@ -10,10 +10,11 @@ Contribuitori: Cicoare Ana Maria 341C5 și Popa Răzvan Mihai 341C5.
 ## [Unreleased]
 
 ### Added
-
-### Fixed 
-
-### Changed
+- Adăugare Dockerfile pentru business_module, payments_module, tasks_module și teams_module
+pe porturile 8002, 8003, 8004, 8000 și push imagini pe Docker Hub.
+- Task-uri făcute: existența și integrarea celor minim 3 servicii proprii, existența și integrarea unui serviciu de baze de date,
+existența și integrarea unui serviciu de utilitar DB (phpmyadmin), existența și integrarea Portainer
+- Task-uri începute: utilizarea Docker și rularea într-un cluster Docker Swarm, existența și integrarea Kong
 
 ---
 
