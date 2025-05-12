@@ -1,11 +1,29 @@
 FROM python:3.10
 
+# Set base working directory
 WORKDIR /app
 
-COPY . .
-
+# Upgrade pip
 RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+
+# Copy the entire teams_module into the image
+COPY ./teams_module ./teams_module
+
+# Copy the entire tasks_module into the image
+COPY ./tasks_module ./tasks_module
+
+# Install teams_module dependencies (optional but helpful)
+WORKDIR /app/teams_module
+RUN pip install -r requirements.txt || true
 RUN pip install -e .
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Install tasks_module dependencies
+WORKDIR /app/tasks_module
+RUN pip install -r requirements.txt
+
+WORKDIR /app
+# Expose the port used by the Django server
+EXPOSE 8005
+
+# Start the server in tasks_module
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8005"]

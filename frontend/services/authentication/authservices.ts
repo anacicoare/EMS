@@ -3,11 +3,11 @@ import axiosInstance from "../axiosInstance";
 export const AuthServices = {
     //Get project members
     callApiLogin: (data: any) => {
-        return axiosInstance.post("/login/", data);
+        return axiosInstance.post("/teams/login/", data);
     },
 
     callApiRegister: (data: any) => {
-        return axiosInstance.post("/register/", data)
+        return axiosInstance.post("/teams/register/", data)
     },
 
     setAxiosHeader: (token: string) => {

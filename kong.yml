@@ -1,16 +1,44 @@
-# _format_version: "2.1"
+_format_version: "2.1"
 
-# services:
-#   - name: books-service
-#     url: http://labkong_books-service/api
-#     routes:
-#       - name: books-service-route
-#         paths: 
-#           - /api/books
-          
-#   - name: db-adminer
-#     url: http://labkong_adminer:8080
-#     routes:
-#       - name: adminer-service
-#         paths:
-#           - /adminer
+services:
+  - name: business-service
+    url: http://localhost:8002
+    routes:
+      - name: business-route
+        paths:
+          - /api/business
+
+  - name: payments-service
+    url: http://localhost:8003
+    routes:
+      - name: payments-route
+        paths:
+          - /api/payments
+
+  - name: tasks-service
+    url: http://localhost:8004
+    routes:
+      - name: tasks-route
+        paths:
+          - /api/tasks
+
+  - name: teams-service
+    url: http://localhost:8005
+    routes:
+      - name: teams-route
+        paths:
+          - /api/teams
+
+  - name: frontend-service
+    url: http://localhost:4000
+    routes:
+      - name: frontend-route
+        paths:
+          - /
+
+  - name: phpmyadmin-service
+    url: http://localhost:8080
+    routes:
+      - name: phpmyadmin-route
+        paths:
+          - /phpmyadmin
