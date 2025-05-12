@@ -23,7 +23,7 @@ RUN pip install -r requirements.txt
 
 WORKDIR /app
 # Expose the port used by the Django server
-EXPOSE 8000
+EXPOSE 8005
 
 # Start the server in tasks_module
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8005"]

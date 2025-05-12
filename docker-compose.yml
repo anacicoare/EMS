@@ -170,7 +170,7 @@ services:
   teams_module:
     image: razvim23/teams-module-image:latest
     ports:
-      - "8000:8000"
+      - "8005:8005"
     environment:
       - DB_HOST=db
       - DB_NAME=ems
@@ -179,7 +179,7 @@ services:
     command: >
       sh -c "
       python tasks_module/manage.py migrate &&
-      python teams_module/manage.py runserver 0.0.0.0:8000
+      python teams_module/manage.py runserver 0.0.0.0:8005
       "
     depends_on:
       - db
@@ -211,26 +211,27 @@ services:
       restart_policy:
         condition: on-failure
 
-  # kong:
-  #   image: kong:latest
-  #   volumes:
-  #     - ./kong:/usr/local/kong/declarative
-  #   environment:
-  #     KONG_DATABASE: 'off'
-  #     KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
-  #     KONG_PROXY_ACCESS_LOG: /dev/stdout
-  #     KONG_ADMIN_ACCESS_LOG: /dev/stdout
-  #     KONG_PROXY_ERROR_LOG: /dev/stderr
-  #     KONG_ADMIN_ERROR_LOG: /dev/stderr
-  #     KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
-  #   ports:
-  #     - "8001:8000"  # HTTP
-  #     - "8443:8443"  # HTTPS
-  #   networks:
-  #     - ems_agent_network
-  #   deploy:
-  #     placement:
-  #       constraints: [node.role == manager]  # Rulează doar pe manager pentru a evita conflictele
+  kong:
+    image: kong:latest
+    volumes:
+      - ./kong.yml:/usr/local/kong/declarative/kong.yml
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+    ports:
+      - "8001:8001"  # Admin API
+      - "8000:8000"  # Proxy
+      - "8443:8443"  # Proxy (SSL)
+    networks:
+      - ems_agent_network
+    deploy:
+      placement:
+        constraints: [node.role == manager]  # Rulează doar pe manager pentru a evita conflictele
 
 
 networks:
