@@ -39,11 +39,13 @@ services:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - ems_agent_network
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 200M
+          cpus: '1'
+          memory: 1000M
       restart_policy:
         condition: on-failure
 
@@ -57,6 +59,8 @@ services:
       PMA_PORT: 3306
     depends_on:
       - db
+    networks:
+      - ems_agent_network
     deploy:
       resources:
         limits:
@@ -99,6 +103,8 @@ services:
       - "8002:8002"
     volumes:
       - ./business_module:/app
+    networks:
+      - ems_agent_network
     deploy:
       resources:
         limits:
@@ -121,6 +127,8 @@ services:
       - DB_NAME=ems
       - DB_USER=root
       - DB_PASSWORD=root
+    networks:
+      - ems_agent_network
     volumes:
       - ./payments_module:/app
     depends_on:
@@ -147,10 +155,10 @@ services:
       - DB_NAME=ems
       - DB_USER=root
       - DB_PASSWORD=root
-    volumes:
-      - ./tasks_module:/app
     depends_on:
       - db
+    networks:
+      - ems_agent_network
     deploy:
       resources:
         limits:
@@ -170,13 +178,13 @@ services:
       - DB_PASSWORD=root
     command: >
       sh -c "
-      python manage.py migrate &&
-      python manage.py runserver 0.0.0.0:8000
+      python tasks_module/manage.py migrate &&
+      python teams_module/manage.py runserver 0.0.0.0:8000
       "
-    volumes:
-      - ./teams_module:/app
     depends_on:
       - db
+    networks:
+      - ems_agent_network
     deploy:
       resources:
         limits:
@@ -193,6 +201,8 @@ services:
       - PORT=4000
     depends_on:
       - db
+    networks:
+      - ems_agent_network
     deploy:
       resources:
         limits:
