@@ -119,7 +119,7 @@ class TeamsView(APIView):
             team_data['members'] = [{
                 'id': member.id,
                 'name': member.name,
-                'tasks': [TaskSerializer(task).data for task in member.tasks.all()]
+                'tasks': []
             } for member in team.members.all()]
 
         return Response({"teams": teams_data}, status=status.HTTP_200_OK)
@@ -269,7 +269,7 @@ class TeamDetailView(APIView):
         team_data['members'] = [{
             'id': member.id,
             'name': member.name,
-            'tasks': [TaskSerializer(task).data for task in member.tasks.all()]
+            'tasks': []
         } for member in team.members.all()]
 
         return Response(team_data, status=status.HTTP_200_OK)
