@@ -48,8 +48,12 @@ services:
           memory: 1000M
       restart_policy:
         condition: on-failure
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-  # utilitar baza de date mysql
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
@@ -69,52 +73,8 @@ services:
       restart_policy:
         condition: on-failure
 
-  # backend:
-  #   image: backend-image:latest
-  #   # command: python manage.py runserver 0.0.0.0:8000
-  #   command: >
-  #     sh -c "
-  #     python manage.py migrate &&
-  #     python manage.py runserver 0.0.0.0:8000
-  #     "
-  #   volumes:
-  #     - ./backend:/app
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     - DB_HOST=db
-  #     - DB_NAME=ems
-  #     - DB_USER=root
-  #     - DB_PASSWORD=root
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.5'
-  #         memory: 1000M
-  #     restart_policy:
-  #       condition: on-failure
-
-  business_module:
-    image: razvim23/business-module-image:latest
-    command: python manage.py runserver 0.0.0.0:8002
-    ports:
-      - "8002:8002"
-    volumes:
-      - ./business_module:/app
-    networks:
-      - ems_agent_network
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1000M
-      restart_policy:
-        condition: on-failure
-
   payments_module:
-    image: razvim23/payments-module-image:latest
+    image: anacicoare/payments-module-image:latest
     command: >
       sh -c "
       python manage.py migrate &&
@@ -142,7 +102,7 @@ services:
         condition: on-failure
 
   tasks_module:
-    image: razvim23/tasks-module-image:latest
+    image: anacicoare/tasks-module-image:latest
     ports:
       - "8004:8004"
     command: >
@@ -168,7 +128,7 @@ services:
         condition: on-failure
 
   teams_module:
-    image: razvim23/teams-module-image:latest
+    image: anacicoare/teams-module-image:latest
     ports:
       - "8005:8005"
     environment:
@@ -178,7 +138,7 @@ services:
       - DB_PASSWORD=root
     command: >
       sh -c "
-      python tasks_module/manage.py migrate &&
+      # python tasks_module/manage.py migrate &&
       python teams_module/manage.py runserver 0.0.0.0:8005
       "
     depends_on:
@@ -193,14 +153,36 @@ services:
       restart_policy:
         condition: on-failure
 
+  business_module:
+    image: anacicoare/business-module-image:1.0.1
+    command: python manage.py runserver 0.0.0.0:8002
+    ports:
+      - "8002:8002"
+    # volumes:
+    #   - ./business_module:/app
+    networks:
+      - ems_agent_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1000M
+      restart_policy:
+        condition: on-failure
+
   frontend:
-    image: razvim23/frontend-image:latest
+    image: anacicoare/frontend-image:latest
     ports:
       - "4000:4000"
     environment:
       - PORT=4000
+      - REACT_APP_API_URL=http://kong:8000
     depends_on:
-      - db
+      - kong
+      - business_module
+      - payments_module
+      - tasks_module
+      - teams_module
     networks:
       - ems_agent_network
     deploy:
@@ -231,15 +213,75 @@ services:
       - ems_agent_network
     deploy:
       placement:
-        constraints: [node.role == manager]  # Rulează doar pe manager pentru a evita conflictele
+        constraints: [node.role == manager]  # Runs only on manager to avoid conflicts
+      restart_policy:
+        condition: on-failure
+    
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - monitoring-network
+    ports:
+      - "9090:9090"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
 
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.47.0
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    networks:
+      - monitoring-network
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.platform.os == linux]
+
+  grafana:
+    image: grafana/grafana:latest
+    depends_on:
+      - prometheus
+    volumes:
+      - grafana_data:/var/lib/grafana
+      # Provisioning:
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    networks:
+      - monitoring-network
+    ports:
+      - "3000:3000"
+    deploy:
+      placement:
+        constraints: [node.role == manager]
+      restart_policy:
+        condition: on-failure
 
 networks:
   ems_agent_network:
     driver: overlay
     attachable: true
 
+  monitoring-network:
+    external: true
+
+
 
 volumes:
   db_data:
   portainer_data:
+  prometheus_data:
+  grafana_data:
