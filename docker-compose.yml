@@ -48,11 +48,9 @@ services:
           memory: 1000M
       restart_policy:
         condition: on-failure
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      placement:
+        constraints:
+          - node.role == manager  # Rulează doar pe manager pentru a evita conflictele
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -73,10 +71,26 @@ services:
       restart_policy:
         condition: on-failure
 
+  # business_module:
+  #   image: razvim23/business-module-image:latest
+  #   command: python manage.py runserver 0.0.0.0:8002
+  #   ports:
+  #     - "8002:8002"
+  #   networks:
+  #     - ems_agent_network
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 1000M
+  #     restart_policy:
+  #       condition: on-failure
+
   payments_module:
     image: anacicoare/payments-module-image:latest
     command: >
       sh -c "
+      python manage.py makemigrations &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8003
       "
@@ -89,8 +103,6 @@ services:
       - DB_PASSWORD=root
     networks:
       - ems_agent_network
-    volumes:
-      - ./payments_module:/app
     depends_on:
       - db
     deploy:
@@ -209,6 +221,7 @@ services:
       - "8001:8001"  # Admin API
       - "8000:8000"  # Proxy
       - "8443:8443"  # Proxy (SSL)
+      - "8444:8444"  # Admin API (SSL)
     networks:
       - ems_agent_network
     deploy:
