@@ -11,9 +11,18 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+from django.http.request import validate_host
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Replace Django's validator with a function that always returns True
+def allow_any_host(host, allowed_hosts):
+    return True
+
+# Replace Django's validator with our custom one
+validate_host = allow_any_host
 
 
 # Quick-start development settings - unsuitable for production
@@ -55,6 +64,7 @@ INSTALLED_APPS = [
 CORS_ORIGIN_ALLOW_ALL = True
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -62,7 +72,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = "teams_module.urls"

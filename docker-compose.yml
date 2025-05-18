@@ -48,6 +48,9 @@ services:
           memory: 1000M
       restart_policy:
         condition: on-failure
+      placement:
+        constraints:
+          - node.role == manager  # Rulează doar pe manager pentru a evita conflictele
 
   # utilitar baza de date mysql
   phpmyadmin:
@@ -69,40 +72,11 @@ services:
       restart_policy:
         condition: on-failure
 
-  # backend:
-  #   image: backend-image:latest
-  #   # command: python manage.py runserver 0.0.0.0:8000
-  #   command: >
-  #     sh -c "
-  #     python manage.py migrate &&
-  #     python manage.py runserver 0.0.0.0:8000
-  #     "
-  #   volumes:
-  #     - ./backend:/app
-  #   ports:
-  #     - "8000:8000"
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     - DB_HOST=db
-  #     - DB_NAME=ems
-  #     - DB_USER=root
-  #     - DB_PASSWORD=root
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         cpus: '0.5'
-  #         memory: 1000M
-  #     restart_policy:
-  #       condition: on-failure
-
   business_module:
     image: razvim23/business-module-image:latest
     command: python manage.py runserver 0.0.0.0:8002
     ports:
       - "8002:8002"
-    volumes:
-      - ./business_module:/app
     networks:
       - ems_agent_network
     deploy:
@@ -117,6 +91,7 @@ services:
     image: razvim23/payments-module-image:latest
     command: >
       sh -c "
+      python manage.py makemigrations &&
       python manage.py migrate &&
       python manage.py runserver 0.0.0.0:8003
       "
@@ -129,8 +104,6 @@ services:
       - DB_PASSWORD=root
     networks:
       - ems_agent_network
-    volumes:
-      - ./payments_module:/app
     depends_on:
       - db
     deploy:
@@ -227,6 +200,7 @@ services:
       - "8001:8001"  # Admin API
       - "8000:8000"  # Proxy
       - "8443:8443"  # Proxy (SSL)
+      - "8444:8444"  # Admin API (SSL)
     networks:
       - ems_agent_network
     deploy:
